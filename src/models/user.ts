@@ -1,9 +1,16 @@
+export enum Roles {
+    'user',
+    'admin'
+}
+
+export const roles = {
+	USER: 'user',
+	ADMIN: 'admin'
+};
+
 export interface User {
-    id: number;
-    username: string;
-    password?: string;
-    name: string;
-    email?: string;
-    gravatar_hash: string;
-    created_at: Date;
+    user_id: number;
+    email: string;
+    password: string;
+    role: Roles,
 }

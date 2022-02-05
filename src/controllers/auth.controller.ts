@@ -1,13 +1,15 @@
 import { Request, Response } from 'express';
-import UsersRepository from '../repositories/users.repository';
+import LoggerRepository from '../repositories/logger.repository';
 import AuthRepository from '../repositories/auth.repository';
+import { Metadata } from '../models/metadata';
 
 class AuthController {
 	public async login (req: Request, res: Response): Promise<Response> {
 		try {
-			const { username, password } = req.body;
-			const token = await AuthRepository.attemptLogin(username, password);
-
+			const { email, password } = req.body;
+			const token = await AuthRepository.attemptLogin(email, password);
+			const metadata: Metadata = { method: req.method, url: req.url, headers: req.rawHeaders };
+			await LoggerRepository.registerLogin(email, metadata);
 			return res.json({ token });
 		} catch (err: any) {
 			return res.status(401).json({
@@ -20,10 +22,19 @@ class AuthController {
 
 	public async signUp (req: Request, res: Response): Promise<Response> {
 		try {
-			const { email, username, name, password } = req.body;
-			await AuthRepository.register(username, password, name, email);
+			const { email, password } = req.body;
+			const emailInUse = await AuthRepository.checkEmailInUse(email);
 
-			const token = await AuthRepository.attemptLogin(username, password);
+			if (emailInUse) {
+				return res.status(409).json({
+					message: 'Email already in use!',
+					code: 409
+				});
+			}
+
+			await AuthRepository.register(email, password);
+			const token = await AuthRepository.attemptLogin(email, password);
+			console.log(token);
 			return res.json({ token });
 		} catch (err: any) {
 			return res.status(400).json({
@@ -32,18 +43,6 @@ class AuthController {
 				error: err.message
 			});
 		}
-	}
-
-	public async profile (req: Request, res: Response): Promise<Response> {
-		const { decodedToken: { user_id } } = res.locals;
-
-		const user = await UsersRepository.byId(user_id);
-		const info = await UsersRepository.userInfo(user_id);
-
-		return res.json({
-			...user,
-			info
-		});
 	}
 }
 

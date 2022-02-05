@@ -4,22 +4,22 @@ import { queryBuilder } from '../core/database';
 import { sign } from 'jsonwebtoken';
 
 export default class AuthRepository {
-	public static async attemptLogin (username: string, password: string): Promise<string> {
+	public static async attemptLogin (email: string, password: string): Promise<string> {
 		password = createHash('sha256').update(password).digest('hex');
 
 		const user: User = await queryBuilder
 			.select()
-			.from('users')
-			.where('username', '=', username)
+			.from('userTable')
+			.where('email', '=', email)
 			.andWhere('password', '=', password)
 			.first();
 
 		if (user) {
 			const token = sign({
 				exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 31),
-				username: user.username,
 				email: user.email,
-				user_id: user.id
+				user_id: user.user_id,
+				role: user.role
 			}, 'MyVerySecretKeyForSigningToken');
 
 			return token;
@@ -28,22 +28,33 @@ export default class AuthRepository {
 		throw new Error('Bad credentials');
 	}
 
-	public static async register (username: string, password: string, name: string, email: string): Promise<number> {
-		password = createHash('sha256').update(password).digest('hex');
-		const gravatar = createHash('md5').update(email).digest('hex');
+	public static async checkEmailInUse (email: string): Promise<boolean> {
+		const user: User = await queryBuilder
+			.select()
+			.from('userTable')
+			.where('email', '=', email)
+			.first();
 
-		const [userId] = await queryBuilder.insert({
-			username,
+		if (user) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public static async register (email: string, password: string): Promise<number> {
+		password = createHash('sha256').update(password).digest('hex');
+		const role = 'user';
+		const [user_id] = await queryBuilder.insert({
 			email,
 			password,
-			name,
-			gravatar_hash: gravatar
-		}).into('users');
+			role
+		}).into('userTable');
 
-		if (!userId || userId <= 0) {
+		if (!user_id || user_id <= 0) {
 			throw new Error('Problem registering user');
 		}
 
-		return userId;
+		return user_id;
 	}
 }

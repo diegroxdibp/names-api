@@ -23,7 +23,6 @@ export default class TokenMiddleware {
     	try {
     		const token = req.headers.authorization.split('Bearer ')[1];
     		res.locals.decodedToken = verify(token, 'MyVerySecretKeyForSigningToken');
-
     		return next();
     	} catch (err: any) {
     		return res.status(403).json({

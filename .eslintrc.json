@@ -35,6 +35,8 @@
             "always"
         ],
         "no-tabs": "off",
-        "no-mixed-spaces-and-tabs": "off"
+        "no-mixed-spaces-and-tabs": "off",
+        "camelcase": "off",
+        "@typescript-eslint/camelcase": "off"
     }
 }
