@@ -2,15 +2,20 @@ import { Request, Response } from 'express';
 import LoggerRepository from '../repositories/logger.repository';
 import AuthRepository from '../repositories/auth.repository';
 import { Metadata } from '../models/metadata';
+import { verify } from 'jsonwebtoken';
+import { User } from '~/models/user';
 
 class AuthController {
 	public async login (req: Request, res: Response): Promise<Response> {
 		try {
-			const { email, password } = req.body;
-			const token = await AuthRepository.attemptLogin(email, password);
+			console.log(req.body);
+			const token = await AuthRepository.attemptLogin(req.body.email, req.body.password);
+			const { email, role }: User = (verify(token, 'MyVerySecretKeyForSigningToken') as User);
+
 			const metadata: Metadata = { method: req.method, url: req.url, headers: req.rawHeaders };
-			await LoggerRepository.registerLogin(email, metadata);
-			return res.json({ token });
+			await LoggerRepository.addToLoginLogs(email, metadata);
+
+			return res.json({ email, role, token });
 		} catch (err: any) {
 			return res.status(401).json({
 				message: 'Unauthorized',
@@ -22,8 +27,9 @@ class AuthController {
 
 	public async signUp (req: Request, res: Response): Promise<Response> {
 		try {
-			const { email, password } = req.body;
-			const emailInUse = await AuthRepository.checkEmailInUse(email);
+			console.log(req.body);
+			const { password } = req.body;
+			const emailInUse = await AuthRepository.checkEmailInUse(req.body.email);
 
 			if (emailInUse) {
 				return res.status(409).json({
@@ -32,10 +38,10 @@ class AuthController {
 				});
 			}
 
-			await AuthRepository.register(email, password);
-			const token = await AuthRepository.attemptLogin(email, password);
-			console.log(token);
-			return res.json({ token });
+			await AuthRepository.register(req.body.email, password);
+			const token = await AuthRepository.attemptLogin(req.body.email, password);
+			const { email, role }: User = (verify(token, 'MyVerySecretKeyForSigningToken') as User);
+			return res.json({ email, role, token });
 		} catch (err: any) {
 			return res.status(400).json({
 				message: 'Bad request',
