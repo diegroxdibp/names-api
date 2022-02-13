@@ -4,6 +4,7 @@ import UsersController from '../controllers/users.controller';
 import AppController from '../controllers/app.controller';
 import AuthorizationMiddleware from '../security/authorization.middleware';
 import LoggerController from '../controllers/logger.controller';
+import rolesController from '../controllers/roles.controller';
 
 const router = Router();
 
@@ -22,6 +23,7 @@ router.get('/api/users/id/:id', UsersController.getUserById);
 router.get('/api/logs', AuthorizationMiddleware.adminOnly, UsersController.getUserById);
 router.get('/api/users/email/:email', UsersController.getUserByEmail);
 router.delete('/api/users/:id/delete', AuthorizationMiddleware.adminOnly, UsersController.deletetUserById);
-// router.delete('/api/users/:email/delete', UsersController.deleteUserByEmail);
+router.patch('/api/users/roles/:id/user', AuthorizationMiddleware.adminOnly, rolesController.makeUserById);
+router.patch('/api/users/roles/:id/admin', AuthorizationMiddleware.adminOnly, rolesController.makeAdminById);
 
 export default router;

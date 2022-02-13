@@ -1,12 +1,4 @@
-export enum Roles {
-    'user',
-    'admin'
-}
-
-export const roles = {
-	USER: 'user',
-	ADMIN: 'admin'
-};
+import { Roles } from './roles';
 
 export interface User {
     user_id: number;

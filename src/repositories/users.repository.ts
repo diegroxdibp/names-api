@@ -35,20 +35,4 @@ export default class UsersRepository {
 			.where('email', '=', email)
 			.del();
 	}
-
-	public static async getPublicProfiles (user_id: number, search?: string, page?: number): Promise<User[]> {
-		return queryBuilder
-			.select('id', 'name', 'username', 'gravatar_hash', 'created_at')
-			.from('users')
-			.where('id', '<>', user_id);
-	}
-
-	public static async follow (user_id: number, fid: number): Promise<number> {
-		const [followId] = await queryBuilder.insert({
-			id_user: fid,
-			id_follow: user_id
-		}).into('follows');
-
-		return followId;
-	}
 }
