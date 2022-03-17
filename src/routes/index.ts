@@ -5,6 +5,7 @@ import AppController from "../controllers/app.controller";
 import AuthorizationMiddleware from "../security/authorization.middleware";
 import LoggerController from "../controllers/logger.controller";
 import rolesController from "../controllers/roles.controller";
+import sourcesController from "../controllers/sources.controller";
 
 const router = Router();
 
@@ -40,6 +41,21 @@ router.patch(
   "/api/users/roles/:id/admin",
   AuthorizationMiddleware.adminOnly,
   rolesController.makeAdminById
+);
+router.post(
+  "/api/sources/path/set",
+  AuthorizationMiddleware.adminOnly,
+  sourcesController.setPath
+);
+router.get(
+  "/api/sources/path/get",
+  AuthorizationMiddleware.adminOnly,
+  sourcesController.getPath
+);
+router.get(
+  "/api/sources/path/history",
+  AuthorizationMiddleware.adminOnly,
+  sourcesController.getPathHistory
 );
 
 export default router;
