@@ -47,11 +47,7 @@ router.post(
   AuthorizationMiddleware.adminOnly,
   sourcesController.setPath
 );
-router.get(
-  "/api/sources/path/get",
-  AuthorizationMiddleware.adminOnly,
-  sourcesController.getPath
-);
+router.get("/api/sources/path/get", sourcesController.getPath);
 router.get(
   "/api/sources/path/history",
   AuthorizationMiddleware.adminOnly,
