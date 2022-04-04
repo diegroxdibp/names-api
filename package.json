@@ -1,7 +1,7 @@
 {
-  "name": "node-api",
+  "name": "names-api",
   "version": "1.0.0",
-  "description": "Node api scaffold",
+  "description": "Node names api",
   "main": "index.js",
   "author": "contact@diegoponte.eu",
   "scripts": {

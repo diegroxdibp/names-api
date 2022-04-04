@@ -1,6 +1,5 @@
 import cors from 'cors';
 import express from 'express';
-import morgan from 'morgan';
 import { join } from 'path';
 
 import { ConsoleColor } from './core/console';
@@ -20,7 +19,7 @@ export default class App {
 	constructor () {
 		this.express = express();
 		this.setupExpress();
-		this.setupLogger();
+		// this.setupLogger();
 		this.routes();
 	}
 
@@ -32,14 +31,9 @@ export default class App {
 		}));
 	}
 
-	private setupLogger (): void {
-		// this.express.use(RequestLoggerMiddleware.logRequest);
-		// this.express.use(morgan('combined'));
-	}
-
 	private routes (): void {
 		this.express.use(express.static(join(__dirname, '..', 'public')));
-		this.express.use(TokenMiddleware.tokenVerify);
+		// this.express.use(TokenMiddleware.tokenVerify);
 		this.express.use(router);
 	}
 }
