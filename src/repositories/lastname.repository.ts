@@ -1,9 +1,5 @@
 import { queryBuilder } from "../core/database";
 export default class LastnameRepository {
-  // public static async getAllUsers(): Promise<User> {
-  //   return queryBuilder.select("*").from("userTable");
-  // }
-
   public static async allLastnames(): Promise<any> {
     return queryBuilder.select("*").from("lastname_jap");
   }
@@ -24,6 +20,14 @@ export default class LastnameRepository {
       .first();
   }
 
+  public static async getLastnameById(lastname_id: number): Promise<any> {
+    return queryBuilder
+      .select("*")
+      .from("lastname_jap")
+      .where("lastname_id", "=", lastname_id)
+      .first();
+  }
+
   public static async addLastname(lastname: string): Promise<any> {
     return queryBuilder
       .insert({ lastname: lastname })
@@ -31,10 +35,10 @@ export default class LastnameRepository {
       .whereNot({ lastname: lastname });
   }
 
-  public static async deleteById(user_id: number): Promise<any> {
+  public static async deleteById(lastname_id: number): Promise<any> {
     return queryBuilder
       .delete()
-      .from("userTable")
-      .where("user_id", "=", user_id);
+      .from("lastname_jap")
+      .where("lastname_id", "=", lastname_id);
   }
 }

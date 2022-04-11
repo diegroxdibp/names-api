@@ -4,7 +4,6 @@ import FirstnameRepository from "../repositories/firstname.repository";
 class FirstnameController {
   public async allFirstnames(req: Request, res: Response): Promise<Response> {
     const firstnames = await FirstnameRepository.allFirstnames();
-    console.log(firstnames);
     if (!firstnames) {
       return res.status(404).json({
         code: 404,
@@ -17,6 +16,23 @@ class FirstnameController {
   public async getFirstname(req: Request, res: Response): Promise<Response> {
     const firstname = req.params.firstname;
     const name = await FirstnameRepository.getFirstname(firstname);
+    if (!name) {
+      return res.status(404).json({
+        code: 404,
+        message: "No first name found!",
+      });
+    }
+    return res.json(name);
+  }
+
+  public async getFirstnameById(
+    req: Request,
+    res: Response
+  ): Promise<Response> {
+    const firstname_id = req.params.firstname_id;
+    const name = await FirstnameRepository.getFirstnameById(
+      Number(firstname_id)
+    );
     if (!name) {
       return res.status(404).json({
         code: 404,

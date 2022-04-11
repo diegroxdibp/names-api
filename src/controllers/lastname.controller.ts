@@ -27,6 +27,18 @@ class LastnameController {
     return res.json(name);
   }
 
+  public async getLastnameById(req: Request, res: Response): Promise<Response> {
+    const lastname_id = req.params.lastname_id;
+    const name = await LastnameRepository.getLastnameById(Number(lastname_id));
+    if (!name) {
+      return res.status(404).json({
+        code: 404,
+        message: "No last name found!",
+      });
+    }
+    return res.json(name);
+  }
+
   public async randomLastname(req: Request, res: Response): Promise<Response> {
     const lastname = await LastnameRepository.randomLastname();
     if (!lastname) {
@@ -40,7 +52,6 @@ class LastnameController {
 
   public async makeUserById(req: Request, res: Response): Promise<Response> {
     const user_id = req.params.id;
-    console.log("PARAMS -->", user_id);
     const response = await RolesRepository.byIdUser(Number(user_id));
     if (!response) {
       return res.status(404).json({

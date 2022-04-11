@@ -20,6 +20,14 @@ export default class FirstnameRepository {
       .first();
   }
 
+  public static async getFirstnameById(firstname_id: number): Promise<any> {
+    return queryBuilder
+      .select("*")
+      .from("firstname_jap")
+      .where("firstname_id", "=", firstname_id)
+      .first();
+  }
+
   public static async addFirstname(firstname: string): Promise<any> {
     return queryBuilder
       .insert({ firstname: firstname })
@@ -27,10 +35,10 @@ export default class FirstnameRepository {
       .whereNot({ firstname: firstname });
   }
 
-  public static async deleteById(user_id: number): Promise<any> {
+  public static async deleteById(firstname_id: number): Promise<any> {
     return queryBuilder
       .delete()
-      .from("userTable")
-      .where("user_id", "=", user_id);
+      .from("firstname_jap")
+      .where("firstname_id", "=", firstname_id);
   }
 }
