@@ -67,14 +67,14 @@ class CommentsController {
   public async removeComment(req: Request, res: Response): Promise<Response> {
     const comment_id = req.params.comment_id;
     const comment = await CommentsRepository.getCommentById(Number(comment_id));
-
+    await CommentsRepository.removeComment(Number(comment_id));
     if (!comment) {
       return res.status(404).json({
         code: 404,
         message: `Could not find comment with ID ${comment_id}!`,
       });
     }
-    await CommentsRepository.removeComment(Number(comment_id));
+
     const path = comment.images_url[0];
     fs.unlinkSync(path);
     return res.json(`Comment with ID ${comment_id} was removed!`);
