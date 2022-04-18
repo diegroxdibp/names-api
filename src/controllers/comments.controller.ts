@@ -76,7 +76,7 @@ class CommentsController {
     }
 
     const path = comment.images_url[0];
-    fs.unlinkSync(path);
+    if (path) fs.unlinkSync(path);
     return res.json(`Comment with ID ${comment_id} was removed!`);
   }
 }

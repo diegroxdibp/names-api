@@ -35,8 +35,6 @@ export default class App {
         limit: process.env.PAYLOAD_LIMIT,
       })
     );
-    // Function to serve all static files
-    // inside public directory.
   }
 
   private routes(): void {
